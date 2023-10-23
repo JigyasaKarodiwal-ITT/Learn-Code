@@ -1,0 +1,127 @@
+#include <iostream>
+#include <string>
+
+namespace EmailCarbonFootprintCalculator {
+
+    class EmailCarbonFootprint {
+    public:
+        double Inbox_CarbonFootprint;
+        double Sent_CarbonFootprint;
+        double Spam_CarbonFootprint;
+        double Total_CarbonFootprint;
+
+        EmailCarbonFootprint(int spam_Emails, int standard_Emails, int with_attachment_Emails) {
+            Inbox_CarbonFootprint = spam_Emails * 0.3 + standard_Emails * 4;
+            Sent_CarbonFootprint = standard_Emails * 4;
+            Spam_CarbonFootprint = spam_Emails * 0.3;
+            Total_CarbonFootprint = Inbox_CarbonFootprint + Sent_CarbonFootprint + with_attachment_Emails * 50;
+        }
+
+        void DisplayDayTotal() {
+            std::cout << "Carbon Footprint of a Emails in a day" << std::endl;
+            std::cout << "Inbox: " << Inbox_CarbonFootprint << " g CO2e" << std::endl;
+            std::cout << "Sent: " << Sent_CarbonFootprint << " g CO2e" << std::endl;
+            std::cout << "Spam: " << Spam_CarbonFootprint << " g CO2e" << std::endl;
+            std::cout << "Total: " << Total_CarbonFootprint << " g CO2e" << std::endl;
+        }
+
+        double YearlyTotal(int daysPerYear) {
+            return Total_CarbonFootprint * daysPerYear;
+        }
+    };
+
+    class ServerCarbonFootprint {
+    public:
+        double ServerFootprint;
+
+        ServerCarbonFootprint(std::string data_Center, double usage_in_HoursPerDay, double power_Consumption_in_Watt, double energyEfficiency) {
+            double carbonIntensity = 0.3;
+            double energyConsumptionKWh = (power_Consumption_in_Watt / 1000) * usage_in_HoursPerDay;
+            double dailyCarbonEmissions = energyConsumptionKWh * carbonIntensity;
+            dailyCarbonEmissions /= energyEfficiency;
+
+            ServerFootprint = dailyCarbonEmissions;
+        }
+
+        void DisplayServerFootprint(double power_Consumption_in_Watt, double usage_in_HoursPerDay, double energyEfficiency) {
+            double carbonIntensity = 0.3;
+            double energyConsumptionKWh = (power_Consumption_in_Watt / 1000) * usage_in_HoursPerDay;
+            double dailyCarbonEmissions = energyConsumptionKWh * carbonIntensity;
+            dailyCarbonEmissions /= energyEfficiency;
+
+            std::cout << "Server Carbon Footprint" << std::endl;
+            std::cout << "carbonIntensity: " << carbonIntensity << " g CO2e per kWh" << std::endl;
+            std::cout << "energyConsumptionKWh: " << energyConsumptionKWh << " kWh" << std::endl;
+            std::cout << "dailyCarbonEmissions: " << dailyCarbonEmissions << " g CO2e" << std::endl;
+            std::cout << "Server: " << ServerFootprint << " g CO2e" << std::endl;
+        }
+    };
+}
+
+int main() {
+    std::cout << "Carbon Footprint Calculator" << std::endl;
+
+    std::cout << "entity type (email or server): ";
+    std::string entityType;
+    std::cin >> entityType;
+
+    if (entityType == "email") {
+        std::cout << "Enter the number of spam emails received: ";
+        int spam_Emails;
+        if (!(std::cin >> spam_Emails) || spam_Emails < 0) {
+            std::cout << "Invalid input. Please enter a valid number of spam emails." << std::endl;
+            return 1;
+        }
+
+        std::cout << "Enter the number of standard emails received: ";
+        int standard_Emails;
+        if (!(std::cin >> standard_Emails) || standard_Emails < 0) {
+            std::cout << "Invalid input. Please enter a valid number of standard emails." << std::endl;
+            return 1;
+        }
+
+        std::cout << "Enter the number of emails with attachments received: ";
+        int attachment_Emails;
+        if (!(std::cin >> attachment_Emails) || attachment_Emails < 0) {
+            std::cout << "Invalid input. Please enter a valid number of emails with attachments." << std::endl;
+            return 1;
+        }
+
+        EmailCarbonFootprintCalculator::EmailCarbonFootprint emailFootprint(spam_Emails, standard_Emails, attachment_Emails);
+        emailFootprint.DisplayDayTotal();
+    }
+    else if (entityType == "server") {
+        std::cout << "Enter the data center(e.g., USA): ";
+        std::string dataCenter;
+        std::cin >> dataCenter;
+
+        std::cout << "Enter the server's daily usage hours: ";
+        double usage_in_HoursPerDay;
+        if (!(std::cin >> usage_in_HoursPerDay) || usage_in_HoursPerDay <= 0) {
+            std::cout << "Invalid input for usage hours. Please enter a valid number." << std::endl;
+            return 1;
+        }
+
+        std::cout << "Enter the server's power consumption in watts: ";
+        double power_Consumption_in_Watt;
+        if (!(std::cin >> power_Consumption_in_Watt) || power_Consumption_in_Watt <= 0) {
+            std::cout << "Invalid input for power consumption. Please enter a valid number." << std::endl;
+            return 1;
+        }
+
+        std::cout << "Enter the server's energy efficiency (e.g., 0.8 for 80% efficiency): ";
+        double energyEfficiency;
+        if (!(std::cin >> energyEfficiency) || energyEfficiency <= 0 || energyEfficiency > 1) {
+            std::cout << "Invalid input for energy efficiency. Please enter a valid value between 0 and 1." << std::endl;
+            return 1;
+        }
+
+        EmailCarbonFootprintCalculator::ServerCarbonFootprint serverFootprint(dataCenter, usage_in_HoursPerDay, power_Consumption_in_Watt, energyEfficiency);
+        serverFootprint.DisplayServerFootprint(power_Consumption_in_Watt, usage_in_HoursPerDay, energyEfficiency);
+    }
+    else {
+        std::cout << "Invalid entity type. Please enter 'email' or 'server'." << std::endl;
+    }
+
+    return 0;
+}
