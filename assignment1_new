@@ -1,0 +1,78 @@
+#include <iostream>
+#include <string>
+#include <vmime/vmime.hpp>
+#include <vmime/platforms/posix/posixHandler.hpp>
+
+using namespace std;
+using namespace vmime;
+
+class EmailCarbonFootprint {
+public:
+    double inbox_carbon_footprint;
+    double spam_carbon_footprint;
+    double total_carbon_footprint;
+
+    EmailCarbonFootprint(int inbox_count, int spam_count) {
+        inbox_carbon_footprint = inbox_count * 0.3;
+        spam_carbon_footprint = spam_count * 0.1;
+        total_carbon_footprint = inbox_carbon_footprint + spam_carbon_footprint;
+    }
+
+    void DisplayCarbonFootprint() {
+        cout << "Carbon Footprint of Emails: " << total_carbon_footprint << " g CO2e" << endl;
+    }
+};
+
+int GetEmailCountIMAP(const string &email_id, const string &password) {
+    try {
+        string server = "imap.example.com";
+        session sess;
+        auto store = sess.getStore();
+        store->setProperties(vmime::make_shared<net::properties>(server, net::port(993), net::connectionType::USE_TLS));
+        store->connect();
+        store->login(email_id, password);
+        auto folder = store->getDefaultFolder();
+        auto messageCount = folder->getMessageCount();
+        store->disconnect();
+        return messageCount;
+    } catch (const std::exception &e) {
+        std::cerr << "IMAP Exception: " << e.what() << std::endl;
+        return -1;
+    }
+}
+
+int GetEmailCountPOP3(const string &email_id, const string &password) {
+    try {
+        string server = "pop.example.com";
+        session sess;
+        auto store = sess.getStore();
+        store->setProperties(vmime::make_shared<net::properties>(server, net::port(995), net::connectionType::USE_SSL));
+        store->connect();
+        store->login(email_id, password);
+        auto folder = store->getDefaultFolder();
+        auto messageCount = folder->getMessageCount();
+        store->disconnect();
+        return messageCount;
+    } catch (const std::exception &e) {
+        std::cerr << "POP3 Exception: " << e.what() << std::endl;
+        return -1;
+    }
+}
+
+int main() {
+    string email_id, password;
+    cout << "Enter your email ID: ";
+    cin >> email_id;
+
+    cout << "Enter your password: ";
+    cin >> password;
+
+    // Get the number of emails in the inbox and spam folders using IMAP and POP3 protocols
+    int inbox_count = GetEmailCountIMAP(email_id, password);
+    int spam_count = GetEmailCountPOP3(email_id, password);
+
+    cout << "Inbox Count: " << inbox_count << endl;
+    cout << "Spam Count: " << spam_count << endl;
+   
+    return 0;
+}
