@@ -25,10 +25,10 @@ public:
 
 int GetEmailCountIMAP(const string &email_id, const string &password) {
     try {
-        string server = "imap.example.com";
+        string server = "imap.gmail.com";
         session sess;
         auto store = sess.getStore();
-        store->setProperties(vmime::make_shared<net::properties>(server, net::port(993), net::connectionType::USE_TLS));
+        store->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(993), net::connectionType::TLS));
         store->connect();
         store->login(email_id, password);
         auto folder = store->getDefaultFolder();
@@ -43,10 +43,10 @@ int GetEmailCountIMAP(const string &email_id, const string &password) {
 
 int GetEmailCountPOP3(const string &email_id, const string &password) {
     try {
-        string server = "pop.example.com";
+        string server = "pop.gmail.com";
         session sess;
         auto store = sess.getStore();
-        store->setProperties(vmime::make_shared<net::properties>(server, net::port(995), net::connectionType::USE_SSL));
+        store->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(995), net::connectionType::SSL));
         store->connect();
         store->login(email_id, password);
         auto folder = store->getDefaultFolder();
@@ -73,6 +73,9 @@ int main() {
 
     cout << "Inbox Count: " << inbox_count << endl;
     cout << "Spam Count: " << spam_count << endl;
+
+    EmailCarbonFootprint emailfootprint;
+    emailfootprint.DisplayCarbonFootprint();
    
     return 0;
 }
