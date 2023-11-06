@@ -6,20 +6,20 @@
 using namespace std;
 using namespace vmime;
 
-class EmailCarbonFootprint {
+class EmailCarbonFootprintProvider {
 public:
-    double inbox_carbon_footprint;
-    double spam_carbon_footprint;
-    double total_carbon_footprint;
+    double inboxCarbonFootprint;
+    double spamCarbonFootprint;
+    double totalCarbonFootprint;
 
-    EmailCarbonFootprint(int inbox_count, int spam_count) {
-        inbox_carbon_footprint = inbox_count * 0.3;
-        spam_carbon_footprint = spam_count * 0.1;
-        total_carbon_footprint = inbox_carbon_footprint + spam_carbon_footprint;
+    EmailCarbonFootprintProvider(int inbox_count, int spam_count) {
+        inboxCarbonFootprint = inbox_count * 0.3;
+        spamCarbonFootprint = spam_count * 0.1;
+        totalCarbonFootprint = inboxCarbonFootprint + spamCarbonFootprint;
     }
 
     void DisplayCarbonFootprint() {
-        cout << "Carbon Footprint of Emails: " << total_carbon_footprint << " g CO2e" << endl;
+        cout << "Carbon Footprint of Emails: " << totalCarbonFootprint << " g CO2e" << endl;
     }
 };
 
@@ -27,13 +27,13 @@ int GetEmailCountIMAP(const string &email_id, const string &password) {
     try {
         string server = "imap.gmail.com";
         session sess;
-        auto store = sess.getStore();
-        store->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(993), net::connectionType::TLS));
-        store->connect();
-        store->login(email_id, password);
-        auto folder = store->getDefaultFolder();
+        auto mailStore = sess.getStore();
+        mailStore->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(993), net::connectionType::TLS));
+        mailStore->connect();
+        mailStore->login(email_id, password);
+        auto folder = mailStore->getDefaultFolder();
         auto messageCount = folder->getMessageCount();
-        store->disconnect();
+        mailStore->disconnect();
         return messageCount;
     } catch (const std::exception &e) {
         std::cerr << "IMAP Exception: " << e.what() << std::endl;
@@ -45,13 +45,13 @@ int GetEmailCountPOP3(const string &email_id, const string &password) {
     try {
         string server = "pop.gmail.com";
         session sess;
-        auto store = sess.getStore();
-        store->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(995), net::connectionType::SSL));
-        store->connect();
-        store->login(email_id, password);
-        auto folder = store->getDefaultFolder();
+        auto mailStore = sess.getStore();
+        mailStore->setProperties(vmime::make_shared<net::properties>(gmail.com, net::port(995), net::connectionType::SSL));
+        mailStore->connect();
+        mailStore->login(email_id, password);
+        auto folder = mailStore->getDefaultFolder();
         auto messageCount = folder->getMessageCount();
-        store->disconnect();
+        mailStore->disconnect();
         return messageCount;
     } catch (const std::exception &e) {
         std::cerr << "POP3 Exception: " << e.what() << std::endl;
@@ -74,8 +74,8 @@ int main() {
     cout << "Inbox Count: " << inbox_count << endl;
     cout << "Spam Count: " << spam_count << endl;
 
-    EmailCarbonFootprint emailfootprint;
-    emailfootprint.DisplayCarbonFootprint();
+    EmailCarbonFootprintProvider emailfootprintObject;
+    emailfootprintObject.DisplayCarbonFootprint();
    
     return 0;
 }
