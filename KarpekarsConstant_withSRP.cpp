@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-int getStepsToReachKaprekar(int num) {
+int kaprekar_calculation(int num) {
     int digits[4];
     for (int i = 3; i >= 0; --i) {
         digits[i] = num % 10;
@@ -18,12 +18,12 @@ int getStepsToReachKaprekar(int num) {
 }
 
 
-int kaprekar(int num) {
+int steps_to_reach_kaprekar_const(int num) {
     const int kaprekar_const = 6174;
     int count = 0;
 
     while (num != kaprekar_const && num != 0) {
-        int nextStep = getStepsToReachKaprekar(num);
+        int nextStep = kaprekar_calculation(num);
 
         
         std::cout << num << " -> " << nextStep << std::endl;
@@ -59,7 +59,7 @@ int main() {
         return 1;
     }
 
-    int steps = kaprekar(num);
+    int steps = steps_to_reach_kaprekar_const(num);
     displayResult(steps);
 
     return 0;
