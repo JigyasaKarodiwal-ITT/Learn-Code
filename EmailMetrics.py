@@ -1,13 +1,13 @@
 from googleapiclient.errors import HttpError
 
 class EmailMetrics:
-    def __init__(self, gmail_api_service, user_id):
-        self.gmail_api_service = gmail_api_service
-        self.user_id = user_id
+    def __init__(self, gmailApiService, userId):
+        self.gmailApiService = gmailApiService
+        self.userId = userId
 
-    def get_email_count(self, label_id):
+    def getEmailCount(self, labelId):
         try:
-            response = self.gmail_api_service.users().labels().get(userId=self.user_id, id=label_id).execute()
+            response = self.gmailApiService.users().labels().get(userId=self.userId, id=labelId).execute()
             return response['messagesTotal']
         except HttpError as e:
             print(f"Error getting emails: {e}")
