@@ -5,33 +5,34 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google_auth_oauthlib.flow import InstalledAppFlow
 
+
 class GmailAPIAuthorization:
-    def __init__(self, token_path):
-        self.token_path = token_path
+    def __init__(self, tokenPath):
+        self.tokenPath = tokenPath
 
-    def authorize_gmail_api(self):
-        mail_credentials = self._load_mail_credentials()
+    def authorizeGmailApi(self):
+        mailCredentials = self._loadMailCredentials()
 
-        if not mail_credentials or not mail_credentials.valid:
-            if mail_credentials and mail_credentials.expired and mail_credentials.refresh_token:
-                mail_credentials.refresh(Request())
+        if not mailCredentials or not mailCredentials.valid:
+            if mailCredentials and mailCredentials.expired and mailCredentials.refresh_token:
+                mailCredentials.refresh(Request())
             else:
-                mail_credentials = self._obtain_credentials()
+                mailCredentials = self._obtainCredentials()
 
-        return build('gmail', 'v1', credentials=mail_credentials)
+        return build('gmail', 'v1', credentials=mailCredentials)
 
-    def _load_mail_credentials(self):
-        mail_credentials = None
-        if os.path.exists(self.token_path):
-            mail_credentials = Credentials.from_authorized_user_file(self.token_path)
-        return mail_credentials
+    def _loadMailCredentials(self):
+        mailCredentials = None
+        if os.path.exists(self.tokenPath):
+            mailCredentials = Credentials.from_authorized_user_file(self.tokenPath)
+        return mailCredentials
 
-    def _obtain_credentials(self):
+    def _obtainCredentials(self):
         flow = InstalledAppFlow.from_client_secrets_file(
             'credentials.json', ['https://www.googleapis.com/auth/gmail.readonly'])
-        mail_credentials = flow.run_local_server(port=0)
+        mailCredentials = flow.run_local_server(port=0)
 
-        with open(self.token_path, 'w') as token:
-            token.write(mail_credentials.to_json())
+        with open(self.tokenPath, 'w') as token:
+            token.write(mailCredentials.to_json())
 
-        return mail_credentials
+        return mailCredentials
