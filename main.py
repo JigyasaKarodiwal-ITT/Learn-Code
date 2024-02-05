@@ -4,16 +4,17 @@ from CarbonEmissionCalculator import CarbonEmissionCalculator
 from EmailAnalyzer import EmailAnalyzer
 
 def main():
-    token_path = 'token.json'
+    tokenPath = 'token.json'
+    
+    gmailApiAuthorization = GmailAPIAuthorization(tokenPath)
+    gmailApiService = gmailApiAuthorization.authorizeGmailApi()
 
-    gmail_api_authorization = GmailAPIAuthorization(token_path)
-    gmail_api_service = gmail_api_authorization.authorize_gmail_api()
+    emailMetrics = EmailMetrics(gmailApiService, 'apitesternew@gmail.com')
+    carbonEmissionCalculator = CarbonEmissionCalculator()
 
-    email_metrics = EmailMetrics(gmail_api_service, 'apitesternew@gmail.com')
-    carbon_emission_calculator = CarbonEmissionCalculator()
+    emailAnalyzer = EmailAnalyzer(emailMetrics, carbonEmissionCalculator)
+    emailAnalyzer.analyzeEmails()
 
-    email_analyzer = EmailAnalyzer(email_metrics, carbon_emission_calculator)
-    email_analyzer.analyze_emails()
 
 if __name__ == '__main__':
     main()
