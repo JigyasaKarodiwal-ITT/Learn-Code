@@ -1,18 +1,18 @@
 class EmailAnalyzer:
-    def __init__(self, email_metrics, carbon_emission_calculator):
-        self.email_metrics = email_metrics
-        self.carbon_emission_calculator = carbon_emission_calculator
+    def __init__(self, emailMetrics, carbonEmissionCalculator):
+        self.emailMetrics = emailMetrics
+        self.carbonEmissionCalculator = carbonEmissionCalculator
 
-    def analyze_emails(self):
-        user_id = 'apitesternew@gmail.com'
-        inbox_mail_count = self.email_metrics.get_email_count('INBOX')
-        sent_mail_count = self.email_metrics.get_email_count('SENT')
-        spam_mail_count = self.email_metrics.get_email_count('SPAM')
+    def analyzeEmails(self):
+        userId = 'apitesternew@gmail.com'
+        inboxMailCount = self.emailMetrics.getEmailCount('INBOX')
+        sentMailCount = self.emailMetrics.getEmailCount('SENT')
+        spamMailCount = self.emailMetrics.getEmailCount('SPAM')
 
-        print(f'Inbox count: {inbox_mail_count}')
-        print(f'Sent count: {sent_mail_count}')
-        print(f'Spam count: {spam_mail_count}')
+        print(f'Inbox count: {inboxMailCount}')
+        print(f'Sent count: {sentMailCount}')
+        print(f'Spam count: {spamMailCount}')
 
-        total_emails = inbox_mail_count + sent_mail_count + spam_mail_count
-        total_emission = self.carbon_emission_calculator.calculate_carbon_emission(total_emails)
-        print(f'Estimated email carbon emission: {total_emission} kilograms of CO2')
+        totalEmails = inboxMailCount + sentMailCount + spamMailCount
+        totalEmission = self.carbonEmissionCalculator.calculateCarbonEmission(totalEmails)
+        print(f'Estimated email carbon emission: {totalEmission} kilograms of CO2')
