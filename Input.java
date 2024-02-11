@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class UserInput {
+public class Input {
     public static int takeNumber() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter a 4-digit number: ");
