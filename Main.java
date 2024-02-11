@@ -1,8 +1,8 @@
 public class Main {
     public static void main(String[] args) {
-        int num = UserInput.takeNumber();
+        int num = Input.takeNumber();
 
-        if (num < 1000 || num > 9999) {
+        if (num < Constants.MIN_VALID || num > Constants.MAX_VALID) {
             System.out.println("Please enter a valid 4-digit number.");
             System.exit(1);
         }
