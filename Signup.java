@@ -2,19 +2,13 @@ package signupapp;
 
 import java.util.Scanner;
 
-public class Signup implements UserInteraction {
+public class Signup{
     private final UserHandler userHandler;
 
     public Signup(UserHandler userHandler) {
         this.userHandler = userHandler;
     }
 
-    @Override
-    public void userLogin() {
-    
-    }
-
-    @Override
     public void userSignup() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username:");
