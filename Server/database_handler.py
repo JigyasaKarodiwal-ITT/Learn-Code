@@ -175,11 +175,3 @@ class DatabaseHandler:
             cursor.close()
             self.close()
             return False
-
-    def calculate_sentiment_score(self, comment):
-        positive_words = ["delicious", "fantastic", "excellent", "superb", "enjoyed"]
-        negative_words = ["bad", "poor", "disappointing", "awful", "not good"]
-
-        positive_score = sum(comment.lower().count(word) for word in positive_words)
-        negative_score = sum(comment.lower().count(word) for word in negative_words)
-        return positive_score - negative_score
