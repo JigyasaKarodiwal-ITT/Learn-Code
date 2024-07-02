@@ -152,7 +152,6 @@ class DatabaseHandler:
         cursor.execute(query)
         avg_ratings = cursor.fetchall()
         cursor.close()
-        self.close()
         return avg_ratings
 
     def add_feedback(self, user_id, menu_item_id, rating, comment, date):
@@ -175,3 +174,28 @@ class DatabaseHandler:
             cursor.close()
             self.close()
             return False
+        
+    def add_recommended_menu_item(self, menu_item_id, votes):
+        cursor = self.conn.cursor()
+        query = "INSERT INTO recommendedmenuitem (MenuItemID, Votes) VALUES (%s, %s)"
+        try:
+            cursor.execute(query, (menu_item_id, votes))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"Error in add_recommended_menu_item: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
+
+    def truncate_recommended_menu_item_table(self):
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute("TRUNCATE TABLE recommendedmenuitem")
+            self.conn.commit()
+            return "success"
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+            return "failure"
+

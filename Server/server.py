@@ -34,7 +34,9 @@ class Server:
             if not data:
                 raise ValueError("No data received")
             request = json.loads(data)
+            print("Request : ",request)
             endpoint = request.get("endpoint")
+
             if endpoint == "/login":
                 self.login_handler.login(request, client_socket)
             elif endpoint == "/food_menu":
@@ -45,19 +47,22 @@ class Server:
                 self.add_menu_item(client_socket, request)
             elif endpoint == "/update-menu-item":
                 self.update_menu_item(client_socket, request)
-            elif endpoint == "/roll-out-menu":
-                self.roll_out_menu(client_socket, request)
             elif endpoint == "/view-recomendation":
                 self.view_recomendation(client_socket, request)
             elif endpoint == "/view-feedback":
                 self.view_feedback(client_socket, request)
+            elif endpoint == "/roll-out":
+                self.roll_out_menu(client_socket, request)
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
+
         except ValueError as ve:
             print(f"ValueError: {ve}")
             response = {"status": "failure", "message": "Invalid request format or no data received"}
             client_socket.sendall(json.dumps(response).encode())
+        except ConnectionResetError:
+            print("Connection was forcibly closed by the remote host")
         except Exception as e:
             print(f"Error: {e}")
             response = {"status": "failure", "message": "An error occurred"}
@@ -66,7 +71,29 @@ class Server:
             client_socket.close()
 
     def roll_out_menu(self, client_socket, request):
-        pass
+        data = request.get("data")
+       
+        truncate_result = self.db_handler.truncate_recommended_menu_item_table()
+        if truncate_result == "failure":
+            response = {"status": "failure", "message": "Failed to truncate recommendedmenuitem table"}
+            client_socket.sendall(json.dumps(response).encode())
+            return
+
+        results = []
+        try:
+            for meal, menu_items in data.items():
+                for item in menu_items:
+                    menu_item_id = int(item)
+                    result = self.db_handler.add_recommended_menu_item(menu_item_id, 0)  # Initial votes set to 0
+                    results.append(result)
+            if all(result == "success" for result in results):
+                response = {"status": "success", "message": "Menu items are rolled out successfully"}
+            else:
+                response = {"status": "failure", "message": "An error occurred while adding menu items"}
+        except Exception as e:
+            print(f"Error in roll_out_menu: {e}")
+            response = {"status": "failure", "message": "An error occurred while adding menu items"}
+        client_socket.sendall(json.dumps(response).encode())
     
     def view_recomendation(self, client_socket, request):
         role_name = request.get("RoleName")
@@ -79,7 +106,6 @@ class Server:
         role_name = request.get("role_name")
         print("Inside chef",request)
         feedback = self.db_handler.get_feedback_details()
-        print(feedback)
         response = {"status": "success", "feedback": feedback}
         client_socket.sendall(json.dumps(response).encode())
 
@@ -127,5 +153,5 @@ class Server:
         client_socket.sendall(json.dumps(response).encode())
 
 if __name__ == "__main__":
-    server = Server('localhost', 12345, 'localhost', 'root', '12345678', 'cafeteria_db')
+    server = Server('localhost', 12345, 'localhost', 'root', '12345678', 'cafeteria')
     server.start_server()
