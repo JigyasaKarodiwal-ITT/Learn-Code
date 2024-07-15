@@ -28,7 +28,7 @@ class Recommendation:
             menu_item_id = item["MenuItemID"]
             menu_item_name = item["MenuItem"]
             avg_rating = item["AvgRating"]
-            comment = item.get("Comment", "") 
+            comment = item.get("Comment", "")  # Fetching comment, if available
             sentiment_score = self.calculate_sentiment_score(comment)
 
             combined_score = avg_rating + sentiment_score
@@ -48,10 +48,12 @@ class Recommendation:
                 recommendations[category].append(recommendation)
                 seen_items[category].add(menu_item_id)
 
+        # Sort recommendations by score in descending order and keep only top 3 recommendations
         for category in recommendations:
             recommendations[category].sort(key=lambda x: x["Score"], reverse=True)
             recommendations[category] = recommendations[category][:3]
 
+        # Extract menu item IDs and names from recommendations
         for category in recommendations:
             recommendations[category] = [{"ID": rec["MenuItemID"], "Name": rec["MenuItem"]} for rec in recommendations[category]]
 

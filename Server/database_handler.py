@@ -80,7 +80,7 @@ class DatabaseHandler:
                 "FoodName": item[2],
                 "Rating": item[3],
                 "Comment": item[4],
-                "Date": item[5].strftime('%Y-%m-%d') 
+                "Date": item[5].strftime('%Y-%m-%d')  # Convert date to string
             })
         return feedback_details
     
@@ -91,7 +91,7 @@ class DatabaseHandler:
         INSERT INTO feedback (UserID, MenuItemID, Rating, Comment, Date)
         VALUES (%s, %s, %s, %s, %s)
         """
-        current_date = datetime.now().date() 
+        current_date = datetime.now().date()  # Get current date
         values = (data["UserID"], data["MenuItemID"], float(data["Rating"]), data["Comment"], current_date)
         
         try:
@@ -244,7 +244,7 @@ class DatabaseHandler:
         cursor = self.conn.cursor()
         cursor.execute(query, (diet_preference,))
         return cursor.fetchall()
-    
+
     def add_vote(self, menu_item_id):
         query = "UPDATE recommendedmenuitem SET Votes = Votes + 1 WHERE MenuItemID = %s"
         cursor = self.conn.cursor()
@@ -315,16 +315,24 @@ class DatabaseHandler:
         cursor = self.conn.cursor()
         cursor.execute(query, (user_id,))
         result = cursor.fetchone()
-        return result[0] if result else None     
+        return result[0] if result else None       
     
     def get_low_rating_items(self):
         cursor = self.conn.cursor()
         query = """
-        SELECT m.ID AS MenuItemID, m.Name AS MenuItem, AVG(f.Rating) AS AvgRating, f.Comment, m.MealTypeID
-        FROM feedback f
-        JOIN menuitem m ON f.MenuItemID = m.ID
-        GROUP BY f.MenuItemID, m.Name, f.Comment, m.MealTypeID
-        HAVING Avg(f.Rating) <= 2;
+    SELECT 
+        m.ID AS MenuItemID, 
+        m.Name AS MenuItem, 
+        AVG(f.Rating) AS AvgRating, 
+        m.MealTypeID
+    FROM 
+        feedback f
+    JOIN 
+        menuitem m ON f.MenuItemID = m.ID
+    GROUP BY 
+        m.ID, m.Name, m.MealTypeID
+    HAVING 
+        AVG(f.Rating) <= 2;
         """
         cursor.execute(query)
         result = cursor.fetchall()
@@ -334,8 +342,42 @@ class DatabaseHandler:
             low_rating_items.append({
                 "MenuItemID": item[0],
                 "FoodName": item[1],
-                "AvgRating": item[2]
+                "AvgRating": float(item[2])
             })
         return low_rating_items
+    
+    def add_moms_recipe(self, user_id, moms_recipe):
+        cursor = self.conn.cursor()
+        query = """
+        INSERT INTO momsrecipe (UserID, MomsRecipe)
+        VALUES (%s, %s)
+        """
+        try:
+            cursor.execute(query, (user_id, moms_recipe))
+            self.conn.commit()
+            return "success"
+        except Exception as e:
+            print(f"An error occurred while adding mom's recipe: {e}")
+            self.conn.rollback()
+            return "error"
+        finally:
+            cursor.close()
 
-
+    def get_moms_recipe(self):
+            cursor = self.conn.cursor()
+            query = """
+            SELECT mr.ID, u.Name AS Username, mr.MomsRecipe
+            FROM momsrecipe mr
+            JOIN user u ON mr.UserID = u.ID;
+            """
+            cursor.execute(query)
+            result = cursor.fetchall()
+            cursor.close()
+            momsrecipe_details = []
+            for item in result:
+                momsrecipe_details.append({
+                    "UserID": item[0],
+                    "UserName": item[1],
+                    "Recipe": item[2],
+                })
+            return momsrecipe_details            

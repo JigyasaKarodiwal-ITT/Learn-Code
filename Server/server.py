@@ -67,7 +67,11 @@ class Server:
             elif endpoint == "/update-user-profile":
                 self.update_user_profile(client_socket, request)    
             elif endpoint == "/view-low-rating-items":
-                self.view_low_rating_items(client_socket, request)     
+                self.view_low_rating_items(client_socket, request)  
+            elif endpoint == "/add-moms-recipe":
+                self.moms_recipe(client_socket,request)   
+            elif endpoint == "/view-moms-recipe":
+                self.view_moms_recipe(client_socket,request)    
             else:
                 response = {"status": "failure", "message": "Invalid endpoint"}
                 client_socket.sendall(json.dumps(response).encode())
@@ -82,10 +86,27 @@ class Server:
         finally:
             client_socket.close()
 
+
+    def moms_recipe(self, client_socket, request):
+        user_id = request.get("UserID")
+        moms_recipe = request.get("Recipe")
+        print(request)
+        try:
+            response = self.db_handler.add_moms_recipe(user_id, moms_recipe)
+            if response == "success":
+                response = {"status": "success", "message": "Mom's recipe successfully added"}
+            else:
+                response = {"status": "failure", "message": "Failed to add Mom's recipe"}
+        except Exception as e:
+            print(f"Error in moms_recipe: {e}")
+            response = {"status": "failure", "message": "An error occurred while adding Mom's recipe"}
+        client_socket.sendall(json.dumps(response).encode())
+
     def view_low_rating_items(self, client_socket, request):
         role_name = request.get("role_name")
         if role_name in ["Admin", "Chef"]:
             low_rating_items = self.db_handler.get_low_rating_items()
+            print(low_rating_items)
             response = {"status": "success", "low_rating_items": low_rating_items}
         else:
             response = {"status": "failure", "message": "Access denied"}
@@ -106,7 +127,7 @@ class Server:
     def get_notification(self, client_socket):
         try:
             notifications = self.db_handler.get_notification()
-            
+            # Convert date objects to string
             notifications = [
                 (notification_id, message, date.isoformat() if isinstance(date, datetime.date) else date)
                 for notification_id, message, date in notifications
@@ -156,6 +177,13 @@ class Server:
         print(feedback)
         response = {"status": "success", "feedback": feedback}
         client_socket.sendall(json.dumps(response).encode())
+
+    def view_moms_recipe(self, client_socket, request):
+        role_name = request.get("role_name")
+        recipe = self.db_handler.get_moms_recipe()
+        print(recipe)
+        response = {"status": "success", "feedback": recipe}
+        client_socket.sendall(json.dumps(response).encode())        
 
     def give_feedback(self, client_socket, request):
         role_name = request.get("RoleName")
@@ -247,6 +275,7 @@ class Server:
             diet_preference = self.db_handler.get_diet_preference(user_id)
             voting_items = self.db_handler.get_voting_items(diet_preference)
             categorized_items = {"Breakfast": [], "Lunch": [], "Dinner": []}
+
             for item in voting_items:
                 meal_type = item[2]
                 categorized_items[meal_type].append({
@@ -254,6 +283,7 @@ class Server:
                     "MenuItemName": item[1],
                     "Votes": item[3]
                 })
+
             response = {"status": "success", "data": categorized_items}
             client_socket.sendall(json.dumps(response).encode())
         except Exception as e:
