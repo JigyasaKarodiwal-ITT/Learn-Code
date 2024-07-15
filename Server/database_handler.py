@@ -80,7 +80,7 @@ class DatabaseHandler:
                 "FoodName": item[2],
                 "Rating": item[3],
                 "Comment": item[4],
-                "Date": item[5].strftime('%Y-%m-%d')  # Convert date to string
+                "Date": item[5].strftime('%Y-%m-%d')  
             })
         return feedback_details
     
@@ -91,7 +91,7 @@ class DatabaseHandler:
         INSERT INTO feedback (UserID, MenuItemID, Rating, Comment, Date)
         VALUES (%s, %s, %s, %s, %s)
         """
-        current_date = datetime.now().date()  # Get current date
+        current_date = datetime.now().date()  
         values = (data["UserID"], data["MenuItemID"], float(data["Rating"]), data["Comment"], current_date)
         
         try:
@@ -345,7 +345,7 @@ class DatabaseHandler:
                 "AvgRating": float(item[2])
             })
         return low_rating_items
-    
+
     def add_moms_recipe(self, user_id, moms_recipe):
         cursor = self.conn.cursor()
         query = """
