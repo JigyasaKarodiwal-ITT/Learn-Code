@@ -17,7 +17,7 @@ class TestLoginHandler(unittest.TestCase):
             "RoleName": "Admin"
         }
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         login_handler = LoginHandler(db_handler)
         client_socket = MagicMock()
 
@@ -47,7 +47,7 @@ class TestLoginHandler(unittest.TestCase):
             "RoleName": "Chef"
         }
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         login_handler = LoginHandler(db_handler)
         client_socket = MagicMock()
 
@@ -77,7 +77,7 @@ class TestLoginHandler(unittest.TestCase):
             "RoleName": "Employee"
         }
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         login_handler = LoginHandler(db_handler)
         client_socket = MagicMock()
 
@@ -103,7 +103,7 @@ class TestLoginHandler(unittest.TestCase):
     def test_login_failure(self, mock_check_login):
         mock_check_login.return_value = None
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         login_handler = LoginHandler(db_handler)
         client_socket = MagicMock()
 

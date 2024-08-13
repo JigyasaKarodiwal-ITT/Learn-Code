@@ -30,7 +30,7 @@ class TestFeedbackHandler(unittest.TestCase):
             }
         ]
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         feedback_handler = FeedbackHandler(db_handler)
         client_socket = MagicMock()
 
@@ -70,7 +70,7 @@ class TestFeedbackHandler(unittest.TestCase):
     def test_give_feedback_success(self, mock_give_menuItemfeedback):
         mock_give_menuItemfeedback.return_value = "success"
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         feedback_handler = FeedbackHandler(db_handler)
         client_socket = MagicMock()
 
@@ -97,7 +97,7 @@ class TestFeedbackHandler(unittest.TestCase):
     def test_give_feedback_failure(self, mock_give_menuItemfeedback):
         mock_give_menuItemfeedback.return_value = "error"
 
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         feedback_handler = FeedbackHandler(db_handler)
         client_socket = MagicMock()
 
@@ -121,7 +121,7 @@ class TestFeedbackHandler(unittest.TestCase):
         print("Test: Give Feedback Failure - Passed")
 
     def test_give_feedback_invalid_role(self):
-        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria')
+        db_handler = DatabaseHandler('localhost', 'root', '12345678', 'cafeteria_db')
         feedback_handler = FeedbackHandler(db_handler)
         client_socket = MagicMock()
 
