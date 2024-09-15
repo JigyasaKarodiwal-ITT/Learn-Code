@@ -1,0 +1,27 @@
+Signup API 
+
+Class Signup:
+	userSignup(username, password):
+		//It will create the the user in the system and store details into the directory.
+
+Class NotificationHandler:
+	onSuccess(username):
+		//notify user on success
+	onFailure(username):
+		//notify user on failure.
+
+Class UserHandler:
+	createNewUser(username, password):
+		// Creates a new user in the user table.
+	
+Class DataBaseHandler:
+	addUser(username, password):
+		// Creates a new user in the user table.
+	addDefaultData(user):
+		//populate default info
+
+Class FileSystemManagement:
+	createUserDirectory(usernam):
+		// Creates a directory in the system for the user.
+
+
